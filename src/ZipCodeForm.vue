@@ -23,7 +23,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.location_name')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -46,7 +46,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.zip_code')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -65,7 +65,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.street')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -85,7 +85,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.city')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -104,7 +104,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.district')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -125,7 +125,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.state')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -144,7 +144,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.country')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -165,7 +165,7 @@
 						class="form-control"
 						:placeholder="trans('common_address.number')"
 					/>
-					<div v-if="!!errors[0]" style="color: red;">
+					<div v-if="!!errors[0]" style="color: red">
 						{{ errors[0] }}
 					</div>
 				</ValidationProvider>
@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import { debounce } from "lodash";
+import { _, debounce } from "lodash";
 import axios from "axios";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import VueElementLoading from "vue-element-loading";
@@ -202,39 +202,47 @@ export default {
 	components: {
 		ValidationObserver,
 		ValidationProvider,
-		VueElementLoading
+		VueElementLoading,
+	},
+	watch: {
+		addressForm: {
+			handler: function (newVal) {
+				console.log("addressForm new value is " + newVal);
+			},
+			deep: true,
+		},
 	},
 	name: "ZipCodeForm",
 	props: {
 		currentAddress: {
 			type: Object,
-			default: () => ({})
+			default: () => ({}),
 		},
 		addressesList: {
 			type: Array,
-			default: () => []
+			default: () => [],
 		},
 		showAddressName: {
 			type: Boolean,
-			default: () => true
+			default: () => true,
 		},
 
 		autocompleteParams: {
 			type: Object,
-			required: true
+			required: true,
 		},
 		autocompleteUrl: {
 			type: String,
-			required: true
+			required: true,
 		},
 		geocodeUrl: {
 			type: String,
-			required: true
+			required: true,
 		},
 		zipCodeUrl: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	data() {
@@ -255,9 +263,9 @@ export default {
 
 				complement: "",
 
-				full_address: ""
+				full_address: "",
 			},
-			loadZipCode: false
+			loadZipCode: false,
 		};
 	},
 
@@ -267,7 +275,7 @@ export default {
 		},
 		async callAutocompleteApi(searchString) {
 			const { data: response } = await axios.get(this.autocompleteUrl, {
-				params: { ...this.autocompleteParams, place: searchString }
+				params: { ...this.autocompleteParams, place: searchString },
 			});
 
 			if (response.success && response.data.length > 0) {
@@ -281,13 +289,13 @@ export default {
 		},
 		async callGeocodeApi(address) {
 			const { data: response } = await axios.get(this.geocodeUrl, {
-				params: { ...this.autocompleteParams, address }
+				params: { ...this.autocompleteParams, address },
 			});
 			if (response.success) return response.data;
 			return false;
 		},
 
-		handleZipCodeInput: debounce(async function() {
+		handleZipCodeInput: debounce(async function () {
 			await this.getZipCodeInfo();
 		}, 400),
 		async getZipCodeInfo() {
@@ -295,7 +303,7 @@ export default {
 				this.loadZipCode = true;
 				try {
 					const response = await axios.post(this.zipCodeUrl, {
-						zipcode: this.addressForm.zip_code
+						zipcode: this.addressForm.zip_code,
 					});
 					this.loadZipCode = false;
 					if (response.status === 200 && response.data.success) {
@@ -315,7 +323,7 @@ export default {
 						theme: "bubble",
 						type: "warning",
 						position: "bottom-center",
-						duration: 5000
+						duration: 5000,
 					});
 				}
 			}
@@ -337,7 +345,7 @@ export default {
 
 				complement: "",
 
-				full_address: ""
+				full_address: "",
 			};
 		},
 		async sendForm() {
@@ -360,7 +368,7 @@ export default {
 
 			this.$emit("on-send-form", this.addressForm);
 			this.resetForm();
-		}
-	}
+		},
+	},
 };
 </script>
