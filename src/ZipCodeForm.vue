@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import { _, debounce } from "lodash";
+import { debounce } from "lodash";
 import axios from "axios";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import VueElementLoading from "vue-element-loading";
