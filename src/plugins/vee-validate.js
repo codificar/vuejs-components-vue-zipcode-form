@@ -1,7 +1,11 @@
 import { extend } from "vee-validate";
 import { required, email, regex } from "vee-validate/dist/rules";
+
+let trans = (key) => {
+  return _.get(window.lang, key, key);
+};
 export default {
-  configValidate(trans) {
+  configValidate() {
     extend("required", {
       ...required,
       message: trans("api.required"),

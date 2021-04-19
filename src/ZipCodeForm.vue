@@ -196,7 +196,7 @@ import axios from "axios";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import VueElementLoading from "vue-element-loading";
 import veeValidate from "./plugins/vee-validate";
-veeValidate.configValidate(this.trans);
+veeValidate.configValidate();
 
 export default {
   components: {
@@ -278,6 +278,9 @@ export default {
   },
 
   methods: {
+    trans(key) {
+      return _.get(window.lang, key, key);
+    },
     async callAutocompleteApi(searchString) {
       const { data: response } = await axios.get(this.autocompleteUrl, {
         params: { ...this.autocompleteParams, place: searchString },
