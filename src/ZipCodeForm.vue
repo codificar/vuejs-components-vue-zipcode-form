@@ -204,14 +204,6 @@ export default {
 		ValidationProvider,
 		VueElementLoading,
 	},
-	watch: {
-		addressForm: {
-			handler: function (newVal) {
-				console.log("addressForm new value is " + newVal);
-			},
-			deep: true,
-		},
-	},
 	name: "ZipCodeForm",
 	props: {
 		currentAddress: {
