@@ -195,6 +195,8 @@ import { debounce } from "lodash";
 import axios from "axios";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import VueElementLoading from "vue-element-loading";
+import veeValidate from "./plugins/vee-validate";
+veeValidate.configValidate(Vue.prototype.trans);
 
 export default {
   components: {
