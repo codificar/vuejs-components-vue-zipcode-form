@@ -277,6 +277,13 @@ export default {
 
 				this.addressForm.latitude = addressData.latitude;
 				this.addressForm.longitude = addressData.longitude;
+			} else {
+				this.$toasted.show(this.trans("common_address.zip_code_not_found"), {
+					theme: "bubble",
+					type: "warning",
+					position: "bottom-center",
+					duration: 5000,
+				});
 			}
 		},
 		async callGeocodeApi(address) {
@@ -350,16 +357,24 @@ export default {
 
 			if (
 				this.addressForm.latitude === "" ||
-				this.addressForm.latitude === ""
+				this.addressForm.longitude === ""
 			) {
 				this.loadZipCode = true;
 				await this.callAutocompleteApi(this.addressForm.full_address);
 			}
 
 			this.loadZipCode = false;
-
-			this.$emit("on-send-form", this.addressForm);
-			this.resetForm();
+			if (this.addressForm.latitude && this.addressForm.longitude) {
+				this.$emit("on-send-form", this.addressForm);
+				this.resetForm();
+			} else {
+				this.$toasted.show(this.trans("common_address.zip_code_not_found"), {
+					theme: "bubble",
+					type: "warning",
+					position: "bottom-center",
+					duration: 5000,
+				});
+			}
 		},
 	},
 };
