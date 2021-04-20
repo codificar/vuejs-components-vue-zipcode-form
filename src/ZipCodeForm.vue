@@ -9,7 +9,7 @@
 			spinner="spinner"
 			color="#6666FF"
 		/>
-		<div class="row m-2" v-if="showAddressName">
+		<div class="m-2 row" v-if="showAddressName">
 			<div class="col">
 				<label> {{ trans("common_address.location_name") }}*</label>
 				<ValidationProvider
@@ -30,13 +30,13 @@
 			</div>
 		</div>
 
-		<div class="row m-2">
+		<div class="m-2 row">
 			<div class="col">
 				<label> {{ trans("common_address.zip_code") }}*</label>
 				<ValidationProvider
 					v-slot="{ errors }"
 					v-mask="['#####-###']"
-					:rules="{ regex: /[0-9]{5}-[\d]{3}/ }"
+					:rules="{ required: true, regex: /[0-9]{5}-[\d]{3}/ }"
 					:name="trans('common_address.zip_code')"
 				>
 					<input
@@ -71,7 +71,7 @@
 				</ValidationProvider>
 			</div>
 		</div>
-		<div class="row m-2">
+		<div class="m-2 row">
 			<div class="col">
 				<label> {{ trans("common_address.city") }}*</label>
 				<ValidationProvider
@@ -111,7 +111,7 @@
 			</div>
 		</div>
 
-		<div class="row m-2">
+		<div class="m-2 row">
 			<div class="col">
 				<label> {{ trans("common_address.state") }}*</label>
 				<ValidationProvider
@@ -151,7 +151,7 @@
 			</div>
 		</div>
 
-		<div class="row m-2">
+		<div class="m-2 row">
 			<div class="col">
 				<label> {{ trans("common_address.number") }}*</label>
 				<ValidationProvider
@@ -182,7 +182,7 @@
 			</div>
 		</div>
 
-		<div class="float-right">
+		<div v-if="showFormButton" class="float-right">
 			<button type="submit" class="btn btn-success">
 				<i class="mdi mdi-plus"></i> {{ trans("common_address.add_new") }}
 			</button>
@@ -197,7 +197,6 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 import VueElementLoading from "vue-element-loading";
 import veeValidate from "./plugins/vee-validate";
 veeValidate.configValidate();
-
 export default {
 	components: {
 		ValidationObserver,
@@ -218,6 +217,10 @@ export default {
 			type: Boolean,
 			default: () => true,
 		},
+		showFormButton: {
+			type: Boolean,
+			default: () => true,
+		},
 
 		autocompleteParams: {
 			type: Object,
@@ -234,6 +237,15 @@ export default {
 		zipCodeUrl: {
 			type: String,
 			required: true,
+		},
+	},
+
+	watch: {
+		addressForm: {
+			handler: function (newVal) {
+				this.$emit("input", newVal);
+			},
+			deep: true,
 		},
 	},
 
@@ -293,7 +305,6 @@ export default {
 			if (response.success) return response.data;
 			return false;
 		},
-
 		handleZipCodeInput: debounce(async function () {
 			await this.getZipCodeInfo();
 		}, 400),
@@ -347,8 +358,14 @@ export default {
 				full_address: "",
 			};
 		},
-		async sendForm() {
+		async validateForm() {
 			const validator = await this.$refs.zipCodeAddressForm.validate();
+			if (validator && this.addressForm.latitude && this.addressForm.longitude)
+				return true;
+			return false;
+		},
+		async sendForm() {
+			const validator = await this.validateForm();
 			if (!validator) {
 				return;
 			}
@@ -364,6 +381,7 @@ export default {
 			}
 
 			this.loadZipCode = false;
+
 			if (this.addressForm.latitude && this.addressForm.longitude) {
 				this.$emit("on-send-form", this.addressForm);
 				this.resetForm();
